@@ -3,19 +3,26 @@ import {Breadcrumb, Card, CardBody, CardHeader, Col, Container, Row} from "react
 import axios from "axios";
 import {getApiConfig} from "../../../helpers";
 import Datatable from "../../common/datatable";
+import pro16 from "../../../assets/images/dashboard/product/1.jpg";
 
 const ListProducts = () => {
     const [products, setProducts] = useState([]);
 
-    const getPromotions = async () => {
+    const getProducts = async () => {
         const response = await axios.get(`${getApiConfig().baseUrl}/articles`, {headers: getApiConfig().headers});
         if (response?.data) {
+            for (let index in response.data) {
+                response.data[index] = {
+                        image: <img alt="" src={response.data[index]['Imagine']} style={{width: 100, height: 100}}/>,
+                        ...response.data[index]
+                    }
+            }
             setProducts(response.data);
         }
     }
 
     useEffect(() => {
-        getPromotions();
+        getProducts();
     }, []);
 
 
@@ -27,7 +34,7 @@ const ListProducts = () => {
                     <Col sm="12">
                         <Card>
                             <CardHeader>
-                                <h5>Promotions</h5>
+                                <h5>Products</h5>
                             </CardHeader>
                             <CardBody>
                                 <div

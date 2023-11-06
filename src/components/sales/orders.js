@@ -1,10 +1,47 @@
-import React, { Fragment } from "react";
+import React, {Fragment, useEffect, useState} from "react";
 import Breadcrumb from "../common/breadcrumb";
-import data from "../../assets/data/orders";
 import Datatable from "../common/datatable";
 import { Card, CardBody, CardHeader, Col, Container, Row } from "reactstrap";
+import axios from "axios";
+import {getApiConfig} from "../../helpers";
 
 const Orders = () => {
+	const [orders, setOrders] = useState([]);
+
+	const getOrders = async () => {
+		const response = await axios.get(`${getApiConfig().baseUrl}/order`, {headers: getApiConfig().headers});
+		if (response?.data) {
+			for (let index in response.data) {
+				delete response.data[index]['productIds'];
+				delete response.data[index]['quantity'];
+				delete response.data[index]['userId'];
+				delete response.data[index]['deliveryAddress'];
+				delete response.data[index]['billingAddress'];
+				const deliveryAddress = response.data[index]['deliveryAddressModel'];
+				const billingAddress = response.data[index]['billingAddressModel'];
+
+				delete response.data[index]['deliveryAddressModel'];
+				delete response.data[index]['billingAddressModel'];
+
+				response.data[index] = {
+					id: response.data[index]['id'],
+					orderNumber: response.data[index]['orderNumber'],
+					webRefNo: response.data[index]['webRefNo'],
+					deliveryAddress: deliveryAddress?.street + ', ' + deliveryAddress?.city,
+					billingAddress: billingAddress?.street + ', ' + billingAddress?.city,
+					price: response.data[index]['price'] + ' RON',
+					...response.data[index]
+				}
+
+			}
+			setOrders(response.data);
+		}
+	}
+
+	useEffect(() => {
+		getOrders();
+	}, []);
+
 	return (
 		<Fragment>
 			<Breadcrumb title="Orders" parent="Sales" />
@@ -17,13 +54,13 @@ const Orders = () => {
 								<h5>Manage Order</h5>
 							</CardHeader>
 							<CardBody className="order-datatable">
-								<Datatable
+								{orders.length > 0 && <Datatable
 									multiSelectOption={false}
-									myData={data}
+									myData={orders}
 									pageSize={10}
 									pagination={true}
 									class="-striped -highlight"
-								/>
+								/>}
 							</CardBody>
 						</Card>
 					</Col>

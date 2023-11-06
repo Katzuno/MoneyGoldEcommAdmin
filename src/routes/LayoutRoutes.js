@@ -44,23 +44,23 @@ const LayoutRoutes = () => {
 						/>
 
 						<Route
-							path={`${process.env.PUBLIC_URL}/products/physical/category`}
+							path={`${process.env.PUBLIC_URL}/products/category`}
 							element={<Category />}
 						/>
 						<Route
-							path={`${process.env.PUBLIC_URL}/products/physical/sub-category`}
+							path={`${process.env.PUBLIC_URL}/products/sub-category`}
 							element={<Subcategory />}
 						/>
 						<Route
-							path={`${process.env.PUBLIC_URL}/products/physical/product-list`}
+							path={`${process.env.PUBLIC_URL}/products/product-list`}
 							element={<ListProducts />}
 						/>
 						<Route
-							path={`${process.env.PUBLIC_URL}/products/physical/product-detail`}
+							path={`${process.env.PUBLIC_URL}/products/product-detail`}
 							element={<Productdetail />}
 						/>
 						<Route
-							path={`${process.env.PUBLIC_URL}/products/physical/add-product`}
+							path={`${process.env.PUBLIC_URL}/products/add-product`}
 							element={<Addproduct />}
 						/>
 
