@@ -16,9 +16,10 @@ const OrderInfoTab = ({order}) => {
             let response = await axios.get(`${getApiConfig().baseUrl}/articles/${orderProductIds}`, {headers: getApiConfig().headers});
             if (response?.data) {
                 delete response.data['images'];
+                delete response.data['id'];
+                delete response.data['ID_Produs'];
                 response.data = {
                     image: <img alt="" src={response.data['Imagine']} style={{width: 100, height: 100}}/>,
-                    id: response.data['id'],
                     Nume: response.data['Nume'],
                     Cantitate: orderProductQuantities[index],
                     ...response.data

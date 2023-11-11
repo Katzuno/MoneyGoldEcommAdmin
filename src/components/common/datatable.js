@@ -39,11 +39,18 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, objectType=
 		});
 		let response = {};
 
+		console.log(objectType, 'removeRow');
 		if (objectType === 'promotion') {
 			response = await axios.delete(`${getApiConfig().baseUrl}/promotions/${rowId}`, {headers: getApiConfig().headers});
 		}
 		if (objectType === 'product') {
 			response = await axios.delete(`${getApiConfig().baseUrl}/articles/${rowId}`, {headers: getApiConfig().headers});
+		}
+		if (objectType === 'order') {
+			response = await axios.delete(`${getApiConfig().baseUrl}/orders/${rowId}`, {headers: getApiConfig().headers});
+		}
+		if (objectType === 'user') {
+			response = await axios.delete(`${getApiConfig().baseUrl}/users/${rowId}`, {headers: getApiConfig().headers});
 		}
 		if (response?.status === 200 || response?.status === 204) {
 			setData([...updatedData]);
