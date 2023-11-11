@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, {Fragment, useEffect, useState} from "react";
 import Breadcrumb from "./common/breadcrumb";
 import {
 	Navigation,
@@ -53,6 +53,8 @@ import {
 	Row,
 	Table,
 } from "reactstrap";
+import {getApiConfig} from "../helpers";
+import axios from "axios";
 
 ChartJS.register(
 	CategoryScale,
@@ -70,6 +72,7 @@ ChartJS.register(
   );
 
 const Dashboard = () => {
+
 	const lineData = {
 		labels: ["100", "200", "300", "400", "500", "600", "700", "800"],
 		datasets: [
@@ -215,6 +218,43 @@ const Dashboard = () => {
 		chartArea: { left: 0, top: 0, width: "100%", height: "100%" },
 		legend: "none",
 	};
+
+	const [newUsers, setNewUsers] = useState(0);
+	const [newOrders, setNewOrders] = useState(0);
+	const [newOrdersAvgValue, setNewOrdersAvgValue] = useState(0);
+	const [earnings, setEarnings] = useState(0);
+	const [pendingOrders, setPendingOrders] = useState(0);
+
+	const getUsersLastMonth = async () => {
+		const response = await axios.get(`${getApiConfig().baseUrl}/reports/usersLastMonth`, {headers: getApiConfig().headers});
+		if (response?.data) {
+			setNewUsers(response.data);
+		}
+	}
+
+	const getOrdersLastMonth = async () => {
+		const response = await axios.get(`${getApiConfig().baseUrl}/reports/totalSales`, {headers: getApiConfig().headers});
+		if (response?.data) {
+			setNewOrders(response.data['totalOrders']);
+			setNewOrdersAvgValue(response.data['avgOrderValue']);
+			setEarnings(response.data['totalSales']);
+		}
+	}
+
+	const getPendingOrders = async () => {
+		const response = await axios.get(`${getApiConfig().baseUrl}/reports/pendingOrders`, {headers: getApiConfig().headers});
+		if (response?.data) {
+			setPendingOrders(response.data);
+		}
+	}
+
+	useEffect(() => {
+		getUsersLastMonth();
+		getOrdersLastMonth();
+		getPendingOrders();
+	}, []);
+
+
 	return (
 		<Fragment>
 			<Breadcrumb title="Dashboard" parent="Dashboard" />
@@ -232,8 +272,8 @@ const Dashboard = () => {
 									<Media body className="col-8">
 										<span className="m-0">Earnings</span>
 										<h3 className="mb-0">
-											$ <CountUp className="counter" end={6659} />
-											<small> This Month</small>
+											RON <CountUp className="counter" end={earnings} />
+											<small> Ultima luna</small>
 										</h3>
 									</Media>
 								</Media>
@@ -250,10 +290,9 @@ const Dashboard = () => {
 										</div>
 									</div>
 									<Media body className="col-8">
-										<span className="m-0">Products</span>
+										<span className="m-0">Comenzi in asteptare</span>
 										<h3 className="mb-0">
-											$ <CountUp className="counter" end={9856} />
-											<small> This Month</small>
+											<CountUp className="counter" end={pendingOrders} />
 										</h3>
 									</Media>
 								</Media>
@@ -270,10 +309,10 @@ const Dashboard = () => {
 										</div>
 									</div>
 									<Media body className="col-8">
-										<span className="m-0">Messages</span>
+										<span className="m-0">Numar comenzi</span>
 										<h3 className="mb-0">
-											$ <CountUp className="counter" end={8933} />
-											<small> This Month</small>
+											<CountUp className="counter" end={newOrders} />
+											<small> Ultima luna</small>
 										</h3>
 									</Media>
 								</Media>
@@ -290,10 +329,10 @@ const Dashboard = () => {
 										</div>
 									</div>
 									<Media body className="col-8">
-										<span className="m-0">New Vendors</span>
+										<span className="m-0">Utilizatori noi</span>
 										<h3 className="mb-0">
-											$ <CountUp className="counter" end={45631} />
-											<small> This Month</small>
+											<CountUp className="counter" end={newUsers} />
+											<small> Ultima luna</small>
 										</h3>
 									</Media>
 								</Media>
