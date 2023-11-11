@@ -56,7 +56,10 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, objectType=
 			navigate(`/coupons/create-coupons?id=${rowId}`);
 		}
 		if (objectType === 'product') {
-			navigate(`/products/physical/add-product?id=${rowId}`);
+			navigate(`/products/add-product?id=${rowId}`);
+		}
+		if (objectType === 'order') {
+			navigate(`/sales/order-detail?id=${rowId}`);
 		}
 	};
 

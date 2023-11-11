@@ -60,6 +60,7 @@ const Orders = () => {
 									pageSize={10}
 									pagination={true}
 									class="-striped -highlight"
+									objectType={'order'}
 								/>}
 							</CardBody>
 						</Card>

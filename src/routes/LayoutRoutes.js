@@ -32,6 +32,7 @@ import Listuser from '../components/users/list-user'
 import Createvendors from '../components/vendors/create.vendors'
 import Listvendors from '../components/vendors/list-vendors'
 import ListProducts from "../components/products/physical/list-products";
+import OrderDetail from "../components/sales/order-detail";
 
 const LayoutRoutes = () => {
   return (
@@ -84,6 +85,11 @@ const LayoutRoutes = () => {
 						<Route
 							path={`${process.env.PUBLIC_URL}/sales/orders`}
 							element={<Orders />}
+						/>
+
+						<Route
+							path={`${process.env.PUBLIC_URL}/sales/order-detail`}
+							element={<OrderDetail />}
 						/>
 						<Route
 							path={`${process.env.PUBLIC_URL}/sales/transactions`}

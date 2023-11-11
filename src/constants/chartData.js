@@ -4,7 +4,7 @@ export const lineChart = {
     datasets: [
         {
             data: [60, 78, 60, 89, 76, 87, 47],
-            borderColor: '#ff8084',
+            borderColor: '#a88952',
             backgroundColor:'rgba(255, 128, 132, 0.1)',
             fill: 'origin',
             lineTension: 0.4,
@@ -51,7 +51,7 @@ export const areaChart = {
             {
                 label:'Sales',
                 data: [1000, 1170, 660, 1030],
-                borderColor: '#ff8084',
+                borderColor: '#a88952',
                 backgroundColor:'rgba(255, 128, 132, 0.1)',
                 fill: 'origin',
                 lineTension: 0,
@@ -82,8 +82,8 @@ export const barChart = {
     datasets: [
         {
             data:[2.5, 3, 3, 0.9, 1.3, 1.8, 3.8, 1.5],
-            borderColor: "#ff8084",
-            backgroundColor: "#ff8084",
+            borderColor: "#a88952",
+            backgroundColor: "#a88952",
             borderWidth: 2,
             barPercentage: 0.7,
       		categoryPercentage: 0.4,
@@ -123,7 +123,7 @@ export const sellData = {
     labels: ["", "10", "20", "30", "40", "50", "60", "70", "80"],
     datasets: [{
         backgroundColor: "transparent",
-        borderColor: "#ff8084",
+        borderColor: "#a88952",
         data: [20, 40, 20, 50, 20, 60, 10, 40, 20],
         lineTension: 0,
     }, {
@@ -197,7 +197,7 @@ export const doughnutData = {
     datasets: [
         {
             data: [300, 50, 100],
-            backgroundColor: ['#ff8084', '#13c9ca', '#a5a5a5']
+            backgroundColor: ['#a88952', '#13c9ca', '#a5a5a5']
         }
 
     ]
@@ -217,7 +217,7 @@ export const pieData = {
     datasets: [
         {
             data: [120, 200, 200, 150],
-            backgroundColor: ['#ff8084', '#13c9ca', '#f0b54d', '#a5a5a5']
+            backgroundColor: ['#a88952', '#13c9ca', '#f0b54d', '#a5a5a5']
         }
     ]
 
@@ -238,8 +238,8 @@ export const lineData = {
         {
             lagend: 'none',
             data: [2.5, 3, 3, 0.9, 1.3, 1.8, 3.8, 1.5],
-            borderColor: "#ff8084",
-            backgroundColor: "#ff8084",
+            borderColor: "#a88952",
+            backgroundColor: "#a88952",
             borderWidth: 2
         },
         {
@@ -290,7 +290,7 @@ export const buyData = {
     },
     {
         backgroundColor: "transparent",
-        borderColor: "#ff8084",
+        borderColor: "#a88952",
         data: [0, 30, 40, 10, 86, 40],
     }]
 }
@@ -322,7 +322,7 @@ export const employeeData = {
         {
             lineTension: 0.4,
             data: [60, 78, 60, 89, 76, 87, 47],
-            borderColor: '#ff8084',
+            borderColor: '#a88952',
             backgroundColor: 'rgba(255, 128, 132, 0.1)',
             fill: true,
         }

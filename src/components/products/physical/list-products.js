@@ -12,8 +12,11 @@ const ListProducts = () => {
         const response = await axios.get(`${getApiConfig().baseUrl}/articles`, {headers: getApiConfig().headers});
         if (response?.data) {
             for (let index in response.data) {
+                delete response.data[index]['ID_Produs'];
                 response.data[index] = {
                         image: <img alt="" src={response.data[index]['Imagine']} style={{width: 100, height: 100}}/>,
+                        id: response.data[index]['id'],
+                        Nume: response.data[index]['Nume'],
                         ...response.data[index]
                     }
             }

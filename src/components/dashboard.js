@@ -75,8 +75,8 @@ const Dashboard = () => {
 		datasets: [
 			{
 				data: [2.5, 3, 3, 0.9, 1.3, 1.8, 3.8, 1.5],
-				borderColor: "#ff8084",
-				backgroundColor: "#ff8084",
+				borderColor: "#a88952",
+				backgroundColor: "#a88952",
 				borderWidth: 2,
 				barPercentage: 0.7,
       			categoryPercentage: 0.4,
@@ -109,7 +109,7 @@ const Dashboard = () => {
 			},
 			{
 				backgroundColor: "transparent",
-				borderColor: "#ff8084",
+				borderColor: "#a88952",
 				data: [0, 30, 40, 10, 86, 40],
 				lineTension: 0.4,
 			},
@@ -120,7 +120,7 @@ const Dashboard = () => {
 		title: "",
 		pieHole: 0.35,
 		pieSliceBorderColor: "none",
-		colors: ["#ff8084", "#13c9ca", "#a5a5a5"],
+		colors: ["#a88952", "#13c9ca", "#a5a5a5"],
 		legend: {
 			position: "none",
 		},
@@ -141,7 +141,7 @@ const Dashboard = () => {
 		pieHole: 1,
 		slices: [
 			{
-				color: "#ff8084",
+				color: "#a88952",
 			},
 			{
 				color: "#13c9ca",
@@ -167,7 +167,7 @@ const Dashboard = () => {
 			baselineColor: "transparent",
 			gridlineColor: "transparent",
 		},
-		colors: ["#ff8084"],
+		colors: ["#a88952"],
 		legend: "none",
 	};
 	const LineOptions1 = {
