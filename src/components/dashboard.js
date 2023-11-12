@@ -203,6 +203,9 @@ const Dashboard = () => {
     const [earnings, setEarnings] = useState(0);
     const [pendingOrders, setPendingOrders] = useState(0);
     const [mostSoldProducts, setMostSoldProducts] = useState([]);
+    const [mostSoldPromotions, setMostSoldPromotions] = useState([]);
+    const [mostOrdersByCity, setMostOrdersByCity] = useState([]);
+
     const [mostSoldProductsGraphData, setMostSoldProductsGraphData] = useState(
         {
             labels: [],
@@ -213,6 +216,8 @@ const Dashboard = () => {
             labels: [],
             datasets: [],
         });
+
+    const [mostOrdersByCityGraphData, setMostOrdersByCityGraphData] = useState(null);
 
     const getUsersLastMonth = async () => {
         const response = await axios.get(`${getApiConfig().baseUrl}/reports/usersLastMonth`, {headers: getApiConfig().headers});
@@ -244,11 +249,27 @@ const Dashboard = () => {
         }
     }
 
+    const getMostSoldPromotions = async () => {
+        const response = await axios.get(`${getApiConfig().baseUrl}/reports/topPerformingPromotions`, {headers: getApiConfig().headers});
+        if (response?.data) {
+            setMostSoldPromotions(response.data);
+        }
+    }
+
+    const getMostOrdersByCity = async () => {
+        const response = await axios.get(`${getApiConfig().baseUrl}/reports/citiesWithMostOrders`, {headers: getApiConfig().headers});
+        if (response?.data) {
+            setMostOrdersByCity(response.data);
+        }
+    }
+
     useEffect(() => {
         getUsersLastMonth();
         getOrdersLastMonth();
         getPendingOrders();
         getMostSoldProducts();
+        getMostSoldPromotions();
+        getMostOrdersByCity();
     }, []);
 
     useEffect(() => {
@@ -270,14 +291,18 @@ const Dashboard = () => {
                 },
             ],
         })
+    }, [mostSoldProducts]);
+
+
+    useEffect(() => {
         setMostUsedPromotionsGraphData({
             /**
              * Keep just the first 5 words from the product name
              */
-            labels: mostSoldProducts.map(product => product.productName.split(' ').slice(0, 5).join(' ') + '...'),
+            labels: mostSoldPromotions.map(promotion => promotion.promotionName),
             datasets: [
                 {
-                    data: mostSoldProducts.map(product => parseFloat(product.totalQuantity)),
+                    data: mostSoldPromotions.map(promotion => parseFloat(promotion.totalOrders)),
                     borderColor: "#a5a5a5",
                     backgroundColor: "#a5a5a5",
                     borderWidth: 2,
@@ -286,11 +311,15 @@ const Dashboard = () => {
                 },
             ],
         })
-    }, [mostSoldProducts]);
+    }, [mostSoldPromotions]);
+
 
     useEffect(() => {
-        console.log('mostSoldProductsGraphData: ', mostSoldProductsGraphData);
-    }, [mostSoldProductsGraphData]);
+        setMostOrdersByCityGraphData([
+            ["Oras", "Numar de comenzi"],
+            ...mostOrdersByCity.map(city => [city.cityName, parseInt(city.totalOrders)])
+        ]);
+    }, [mostOrdersByCity]);
 
 
     return (
@@ -494,6 +523,36 @@ const Dashboard = () => {
                                         />
                                     }
                                 </div>
+                            </CardBody>
+                        </Card>
+                    </Col>
+
+                    <Col sm="6">
+                        <Card>
+                            <CardHeader>
+                                <h5>Locatie comenzi</h5>
+                            </CardHeader>
+                            <CardBody>
+                                <Row>
+                                    <Col xl="3 xl-50" sm="6">
+                                        <div className="order-graph">
+                                            <h6>Comenzi dupa oras</h6>
+                                            <div className="chart-block chart-vertical-center">
+                                                {mostOrdersByCityGraphData &&
+                                                    <Chart
+                                                        chartType="PieChart"
+                                                        data={mostOrdersByCityGraphData}
+                                                        options={pieOptions}
+                                                        graph_id="PieChart"
+                                                        width={"100%"}
+                                                        height={"180px"}
+                                                        legend_toggle
+                                                    />
+                                                }
+                                            </div>
+                                        </div>
+                                    </Col>
+                                </Row>
                             </CardBody>
                         </Card>
                     </Col>
