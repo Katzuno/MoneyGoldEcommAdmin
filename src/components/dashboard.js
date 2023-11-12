@@ -208,6 +208,11 @@ const Dashboard = () => {
             labels: [],
             datasets: [],
         });
+    const [mostUsedPromotionsGraphData, setMostUsedPromotionsGraphData] = useState(
+        {
+            labels: [],
+            datasets: [],
+        });
 
     const getUsersLastMonth = async () => {
         const response = await axios.get(`${getApiConfig().baseUrl}/reports/usersLastMonth`, {headers: getApiConfig().headers});
@@ -247,45 +252,14 @@ const Dashboard = () => {
     }, []);
 
     useEffect(() => {
-        /**
-         * {
-         * 			labels: ["100", "200", "300", "400", "500", "600", "700", "800"],
-         * 			datasets: [
-         * 				{
-         * 					data: [2.5, 3, 3, 0.9, 1.3, 1.8, 3.8, 1.5],
-         * 					borderColor: "#a88952",
-         * 					backgroundColor: "#a88952",
-         * 					borderWidth: 2,
-         * 					barPercentage: 0.7,
-         * 					categoryPercentage: 0.4,
-         * 				},
-         * 				{
-         * 					data: [3.8, 1.8, 4.3, 2.3, 3.6, 2.8, 2.8, 2.8],
-         * 					borderColor: "#a5a5a5",
-         * 					backgroundColor: "#a5a5a5",
-         * 					borderWidth: 2,
-         * 					barPercentage: 0.7,
-         * 					categoryPercentage: 0.4,
-         * 				},
-         * 			],
-         * 	}
-         */
         setMostSoldProductsGraphData({
-			/**
-			 * Keep just the first 5 words from the product name
-			 */
+            /**
+             * Keep just the first 5 words from the product name
+             */
             labels:
-				mostSoldProducts.map(product => product.productName.split(' ').slice(0, 5).join(' ') + '...')
-				,
+                mostSoldProducts.map(product => product.productName.split(' ').slice(0, 5).join(' ') + '...')
+            ,
             datasets: [
-                {
-                    data: mostSoldProducts.map(product => parseFloat(product.totalQuantity)),
-                    borderColor: "#a5a5a5",
-                    backgroundColor: "#a5a5a5",
-                    borderWidth: 2,
-                    barPercentage: 0.7,
-                    categoryPercentage: 0.4,
-                },
                 {
                     data: mostSoldProducts.map(product => parseFloat(product.totalRevenue)),
                     borderColor: "#a88952",
@@ -296,11 +270,27 @@ const Dashboard = () => {
                 },
             ],
         })
+        setMostUsedPromotionsGraphData({
+            /**
+             * Keep just the first 5 words from the product name
+             */
+            labels: mostSoldProducts.map(product => product.productName.split(' ').slice(0, 5).join(' ') + '...'),
+            datasets: [
+                {
+                    data: mostSoldProducts.map(product => parseFloat(product.totalQuantity)),
+                    borderColor: "#a5a5a5",
+                    backgroundColor: "#a5a5a5",
+                    borderWidth: 2,
+                    barPercentage: 0.7,
+                    categoryPercentage: 0.4,
+                },
+            ],
+        })
     }, [mostSoldProducts]);
 
-	useEffect(() => {
-		console.log('mostSoldProductsGraphData: ', mostSoldProductsGraphData);
-	}, [mostSoldProductsGraphData]);
+    useEffect(() => {
+        console.log('mostSoldProductsGraphData: ', mostSoldProductsGraphData);
+    }, [mostSoldProductsGraphData]);
 
 
     return (
@@ -318,7 +308,7 @@ const Dashboard = () => {
                                         </div>
                                     </div>
                                     <Media body className="col-8">
-                                        <span className="m-0">Earnings</span>
+                                        <span className="m-0">Vanzari</span>
                                         <h3 className="mb-0">
                                             RON <CountUp className="counter" end={earnings}/>
                                             <small> Ultima luna</small>
@@ -390,7 +380,7 @@ const Dashboard = () => {
                     <Col xl="6 xl-100">
                         <Card>
                             <CardHeader>
-                                <h5>Most sold products (last month)</h5>
+                                <h5>Cele mai vandute produse (ultima luna)</h5>
                             </CardHeader>
                             <CardBody>
                                 <div className="market-chart">
@@ -425,66 +415,85 @@ const Dashboard = () => {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col xl="3 xl-50" md="6">
-                        <Card className=" order-graph sales-carousel">
+                    {/*<Col xl="3 xl-50" md="6">*/}
+                    {/*//     <Card className=" order-graph sales-carousel">*/}
+                    {/*//         <CardHeader>*/}
+                    {/*//             <h6>Total vanzari</h6>*/}
+                    {/*//             <Row>*/}
+                    {/*                <Col className="col-6">*/}
+                    {/*                    <div className="small-chartjs">*/}
+                    {/*                        <div*/}
+                    {/*                            className="flot-chart-placeholder"*/}
+                    {/*                            id="simple-line-chart-sparkline-3"*/}
+                    {/*                        >*/}
+                    {/*                            <Chart*/}
+                    {/*                                height={"60px"}*/}
+                    {/*                                chartType="LineChart"*/}
+                    {/*                                loader={<div>Loading Chart</div>}*/}
+                    {/*                                data={[*/}
+                    {/*                                    ["x", "time"],*/}
+                    {/*                                    [0, 20],*/}
+                    {/*                                    [1, 5],*/}
+                    {/*                                    [2, 120],*/}
+                    {/*                                    [3, 10],*/}
+                    {/*                                    [4, 140],*/}
+                    {/*                                    [5, 15],*/}
+                    {/*                                ]}*/}
+                    {/*                                options={LineOptions}*/}
+                    {/*                                legend_toggle*/}
+                    {/*                            />*/}
+                    {/*                        </div>*/}
+                    {/*                    </div>*/}
+                    {/*                </Col>*/}
+                    {/*                <Col className="col-6">*/}
+                    {/*                    <div className="value-graph">*/}
+                    {/*                        <h3>*/}
+                    {/*                            42%{" "}*/}
+                    {/*                            <span>*/}
+                    {/*								<i className="fa fa-angle-up font-primary"></i>*/}
+                    {/*							</span>*/}
+                    {/*                        </h3>*/}
+                    {/*                    </div>*/}
+                    {/*                </Col>*/}
+                    {/*            </Row>*/}
+                    {/*        </CardHeader>*/}
+                    {/*        <CardBody>*/}
+                    {/*            <Media>*/}
+                    {/*                <Media body>*/}
+                    {/*                    <span>Comenzi in ultima luna</span>*/}
+                    {/*                    <h2 className="mb-0">{newOrders}</h2>*/}
+                    {/*                    <p>*/}
+                    {/*                        0.25%{" "}*/}
+                    {/*                        <span>*/}
+                    {/*							<i className="fa fa-angle-up"></i>*/}
+                    {/*						</span>*/}
+                    {/*//                     </p>*/}
+                    {/*                </Media>*/}
+                    {/*<div className="bg-primary b-r-8">*/}
+                    {/*                    <div className="small-box">*/}
+                    {/*                        <Briefcase/>*/}
+                    {/*                    </div>*/}
+                    {/*                </div>*/}
+                    {/*            </Media>*/}
+                    {/*        </CardBody>*/}
+                    {/*    </Card>*/}
+                    {/*</Col>*/}
+                    <Col xl="6 xl-100">
+                        <Card>
                             <CardHeader>
-                                <h6>Total Sales</h6>
-                                <Row>
-                                    <Col className="col-6">
-                                        <div className="small-chartjs">
-                                            <div
-                                                className="flot-chart-placeholder"
-                                                id="simple-line-chart-sparkline-3"
-                                            >
-                                                <Chart
-                                                    height={"60px"}
-                                                    chartType="LineChart"
-                                                    loader={<div>Loading Chart</div>}
-                                                    data={[
-                                                        ["x", "time"],
-                                                        [0, 20],
-                                                        [1, 5],
-                                                        [2, 120],
-                                                        [3, 10],
-                                                        [4, 140],
-                                                        [5, 15],
-                                                    ]}
-                                                    options={LineOptions}
-                                                    legend_toggle
-                                                />
-                                            </div>
-                                        </div>
-                                    </Col>
-                                    <Col className="col-6">
-                                        <div className="value-graph">
-                                            <h3>
-                                                42%{" "}
-                                                <span>
-													<i className="fa fa-angle-up font-primary"></i>
-												</span>
-                                            </h3>
-                                        </div>
-                                    </Col>
-                                </Row>
+                                <h5>Cele mai folosite promotii (ultima luna)</h5>
                             </CardHeader>
                             <CardBody>
-                                <Media>
-                                    <Media body>
-                                        <span>Comenzi in ultima luna</span>
-                                        <h2 className="mb-0">{newOrders}</h2>
-                                        <p>
-                                            0.25%{" "}
-                                            <span>
-												<i className="fa fa-angle-up"></i>
-											</span>
-                                        </p>
-                                    </Media>
-                                    <div className="bg-primary b-r-8">
-                                        <div className="small-box">
-                                            <Briefcase/>
-                                        </div>
-                                    </div>
-                                </Media>
+                                <div className="market-chart">
+                                    {mostUsedPromotionsGraphData?.labels?.length > 0 &&
+                                        <Bar
+                                            data={mostUsedPromotionsGraphData}
+                                            options={lineOptions}
+                                            width={778}
+                                            height={308}
+                                        />
+                                    }
+                                </div>
                             </CardBody>
                         </Card>
                     </Col>
