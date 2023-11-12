@@ -12,6 +12,7 @@ const Orders = () => {
 		const response = await axios.get(`${getApiConfig().baseUrl}/order`, {headers: getApiConfig().headers});
 		if (response?.data) {
 			for (let index in response.data) {
+				delete response.data[index]['orderNumber'];
 				delete response.data[index]['productIds'];
 				delete response.data[index]['quantity'];
 				delete response.data[index]['userId'];
@@ -19,16 +20,19 @@ const Orders = () => {
 				delete response.data[index]['billingAddress'];
 				const deliveryAddress = response.data[index]['deliveryAddressModel'];
 				const billingAddress = response.data[index]['billingAddressModel'];
+				const promotion = response.data[index]['promotion'];
 
 				delete response.data[index]['deliveryAddressModel'];
 				delete response.data[index]['billingAddressModel'];
+				delete response.data[index]['promotion'];
+				delete response.data[index]['promotionId'];
 
 				response.data[index] = {
 					id: response.data[index]['id'],
-					orderNumber: response.data[index]['orderNumber'],
 					webRefNo: response.data[index]['webRefNo'],
 					deliveryAddress: deliveryAddress?.street + ', ' + deliveryAddress?.city,
 					billingAddress: billingAddress?.street + ', ' + billingAddress?.city,
+					promotion: `${promotion?.voucherCode} (${promotion?.discount})`,
 					price: response.data[index]['price'] + ' RON',
 					...response.data[index]
 				}
