@@ -54,9 +54,9 @@ export const MENUITEMS = [
             // { path: '/users/create-user', title: 'Create User', type: 'link' },
         ]
     },
-    {
-        title: 'Reports', path:'/reports/report', icon: BarChart, type: 'link', active: false
-    },
+    // {
+    //     title: 'Reports', path:'/reports/report', icon: BarChart, type: 'link', active: false
+    // },
     {
         title: 'Facturi', path:'/invoice', icon: Archive, type: 'link', active: false
     },
