@@ -13,7 +13,10 @@ import {
 
 //images
 import logo from "../../../assets/images/dashboard/multikart-logo.png";
-import {isLoggedIn} from "../../../helpers";
+import {getApiConfig, isLoggedIn} from "../../../helpers";
+import {Button} from "reactstrap";
+import axios from "axios";
+import {toast} from "react-toastify";
 
 const Header = () => {
     const [sidebar, setSidebar] = useState(true);
@@ -74,6 +77,13 @@ const Header = () => {
         }
     };
 
+    const handleErpSync = async () => {
+        const response = await axios.post(`${getApiConfig().baseUrl}/sync/full`, {}, {headers: getApiConfig().headers});
+        console.log('response', response.data);
+        if (response?.data === true) {
+            toast.success('Sincronizare cu ERP pornita cu succes!')
+        }
+    }
 
     return (
         <Fragment>
@@ -100,7 +110,8 @@ const Header = () => {
                         <div className="nav-right col">
                             <ul className={"nav-menus " + (navMenus ? "open" : "")}>
                                 <li>
-                                    <SearchHeader/>
+                                    {/*<SearchHeader/>*/}
+                                    <Button color="primary" onClick={handleErpSync}>Sync ERP</Button>
                                 </li>
                                 <li>
                                     <a onClick={goFull} className="text-dark" href="#javaScript">

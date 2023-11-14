@@ -1,89 +1,95 @@
-import React, { Fragment, useState } from "react";
+import React, {Fragment, useEffect, useState} from "react";
 import { Tabs, TabList, TabPanel, Tab } from "react-tabs";
 import { Button, Form, Input, Label } from "reactstrap";
 import MDEditor from "@uiw/react-md-editor";
+import {getApiConfig} from "../../helpers";
+import axios from "axios";
+import {toast} from "react-toastify";
 
-const TabsetPage = () => {
-	const [value, setValue] = useState('')
+const TabsetPage = (objectInfo = null) => {
+	const [text, setText] = useState('');
 
 	const onChange = (e) =>{
-		setValue(e)
+		setText(e)
 	}
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+
+		const response = await axios.patch(`${getApiConfig().baseUrl}/translations/${objectInfo.objectInfo?.id}`, {text: text}, {headers: getApiConfig().headers});
+
+		if (response.status === 201 || response.status === 200) {
+			toast.success('Textul a fost salvat cu succes!');
+			setTimeout(() => {window.location.href = '/pages/list-pages'}, 2000);
+		} else {
+			toast.error('A aparut o eroare la salvarea textului!');
+		}
+	}
+
+	useEffect(() => {
+		setText(objectInfo.objectInfo?.text);
+	}, [objectInfo]);
+
 	return (
 		<Fragment>
 			<div>
 				<Tabs>
 					<TabList className="nav nav-tabs tab-coupon">
 						<Tab className="nav-link">General</Tab>
-						<Tab className="nav-link">SEO</Tab>
 					</TabList>
 
 					<TabPanel>
-						<Form className="needs-validation">
+						<Form className="needs-validation" onSubmit={handleSubmit}>
 							<h4>General</h4>
 							<div className="form-group row">
 								<Label className="col-xl-3 col-md-4">
-									<span>*</span> Name
+									Identificator
 								</Label>
 								<div className="col-xl-8 col-md-7 p-0">
 									<Input
 										className="form-control"
 										id="validationCustom0"
 										type="text"
+										defaultValue={objectInfo.objectInfo?.stringIdentifier}
+										readOnly={true}
+										disabled={true}
+									/>
+								</div>
+							</div>
+							<div className="form-group row">
+								<Label className="col-xl-3 col-md-4">
+									Pozitionare
+								</Label>
+								<div className="col-xl-8 col-md-7 p-0">
+									<Input
+										className="form-control"
+										id="validationCustom0"
+										type="text"
+										defaultValue={objectInfo.objectInfo?.page}
+										readOnly={true}
+										disabled={true}
 									/>
 								</div>
 							</div>
 							<div className="form-group row editor-label">
 								<Label className="col-xl-3 col-md-4">
-									<span>*</span> Description
+									<span>*</span> Text
 								</Label>
 								<div className="col-xl-8 col-md-7 editor-space p-0">
 								<MDEditor
-									value={value}
+									value={text}
 									onChange={onChange}
 								/>
 								</div>
 							</div>
-							<div className="form-group row">
-								<Label className="col-xl-3 col-md-4">Status</Label>
-								<div className="col-xl-8 col-md-7 px-1">
-									<Label className="d-block">
-										<Input
-											className="checkbox_animated"
-											id="chk-ani1"
-											type="checkbox"
-										/>
-										Enable the Coupon
-									</Label>
-								</div>
-							</div>
-						</Form>
-					</TabPanel>
-					<TabPanel>
-						<Form className="needs-validation">
-							<h4>SEO</h4>
-							<div className="form-group row">
-								<Label className="col-xl-3 col-md-4">Meta Title</Label>
-								<div className="col-xl-8 col-md-7 p-0">
-									<Input
-										className="form-control"
-										id="validationCustom2"
-										type="text"
-									/>
-								</div>
-							</div>
-							<div className="form-group row editor-label">
-								<Label className="col-xl-3 col-md-4">Meta Description</Label>
-								<textarea rows="4" className="col-xl-8 col-md-7"></textarea>
+							<div className="pull-right">
+								<Button type="submit" color="primary">
+									Save
+								</Button>
 							</div>
 						</Form>
 					</TabPanel>
 				</Tabs>
-				<div className="pull-right">
-					<Button type="button" color="primary">
-						Save
-					</Button>
-				</div>
 			</div>
 		</Fragment>
 	);

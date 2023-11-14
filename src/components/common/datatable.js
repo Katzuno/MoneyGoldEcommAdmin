@@ -68,6 +68,9 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, objectType=
 		if (objectType === 'order') {
 			navigate(`/sales/order-detail?id=${rowId}`);
 		}
+		if (objectType === 'translation') {
+			navigate(`/pages/create-page?id=${rowId}`);
+		}
 	};
 
 	const renderEditable = (cellInfo) => {
