@@ -34,9 +34,8 @@ export const MENUITEMS = [
         ]
     },
     {
-        title: 'Pages', icon: Clipboard , type: 'sub', active: false, children: [
-            { path: '/pages/list-page', title: 'List Page', type: 'link' },
-            { path: '/pages/create-page', title: 'Create Page', type: 'link' },
+        title: 'Texte', icon: Clipboard , type: 'sub', active: false, children: [
+            { path: '/pages/list-page', title: 'Listare texte', type: 'link' },
         ]
     },
     {
