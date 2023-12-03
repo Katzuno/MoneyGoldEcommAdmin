@@ -71,6 +71,9 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, objectType=
 		if (objectType === 'translation') {
 			navigate(`/pages/create-page?id=${rowId}`);
 		}
+		if (objectType === 'media') {
+			navigate(`/media/edit-media?id=${rowId}`);
+		}
 	};
 
 	const renderEditable = (cellInfo) => {

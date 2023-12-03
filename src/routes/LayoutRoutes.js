@@ -33,6 +33,7 @@ import Createvendors from '../components/vendors/create.vendors'
 import Listvendors from '../components/vendors/list-vendors'
 import ListProducts from "../components/products/physical/list-products";
 import OrderDetail from "../components/sales/order-detail";
+import Create_media from "../components/media/create-media";
 
 const LayoutRoutes = () => {
   return (
@@ -103,6 +104,11 @@ const LayoutRoutes = () => {
 						<Route
 							path={`${process.env.PUBLIC_URL}/coupons/create-coupons`}
 							element={<Createcoupons />}
+						/>
+
+						<Route
+							path={`${process.env.PUBLIC_URL}/media/edit-media`}
+							element={<Create_media />}
 						/>
 
 						<Route
