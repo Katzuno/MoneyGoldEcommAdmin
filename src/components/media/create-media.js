@@ -5,10 +5,12 @@ import axios from "axios";
 import {getApiConfig} from "../../helpers";
 import MyDropzone from "../common/dropzone";
 import MDEditor from "@uiw/react-md-editor";
+import {toast} from "react-toastify";
 
 const Create_media = () => {
 
     const [loadedMedia, setLoadedMedia] = useState(null);
+    const [alt, setAlt] = useState('');
     const [selectedFile, setSelectedFile] = useState(null);
 
     const getMedia = async (id) => {
@@ -22,28 +24,29 @@ const Create_media = () => {
 
 
     const handleSave = async () => {
-        if (selectedFile) {
-            const formData = new FormData();
-            formData.append('file', selectedFile);
+        const body = {
+            alt: alt,
+        }
 
-            try {
-                const response = await axios.post(
-                    `${getApiConfig().baseUrl}/media/${loadedMedia?.identifier}/upload`,
-                    formData,
-                    {
-                        headers: {
-                            ...getApiConfig().headers,
-                            'Content-Type': 'multipart/form-data',
-                        },
-                    }
-                );
+        try {
+            const response = await axios.post(
+                `${getApiConfig().baseUrl}/media/${loadedMedia?.identifier}/edit-alt`,
+                body,
+                {
+                    headers: {
+                        ...getApiConfig().headers,
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
 
-                // Handle the response as needed
-                console.log(response.data);
-            } catch (error) {
-                // Handle errors
-                console.error('Error uploading file:', error);
+            // Handle the response as needed
+            if (response?.status === 201) {
+                toast.success('Descrierea a fost salvata cu succes!');
             }
+        } catch (error) {
+            // Handle errors
+            toast.error('Error uploading file:', error);
         }
     };
 
@@ -100,8 +103,27 @@ const Create_media = () => {
                                                 />
                                             </FormGroup>
 
-                                            <Label className="col-form-label pt-0"> Modifica imaginea</Label>
-											{loadedMedia?.identifier && <MyDropzone mediaFile={loadedMedia?.identifier}/>}
+                                            <FormGroup>
+                                                <Label className="col-form-label pt-0">
+                                                    <span></span> Alt text
+                                                </Label>
+                                                <Input
+                                                    className="form-control"
+                                                    id="validationCustom01"
+                                                    type="text"
+                                                    defaultValue={loadedMedia?.alt}
+                                                    onChange={(e) => setAlt(e.target.value)}
+                                                />
+                                            </FormGroup>
+
+                                            <button className="btn btn-primary" onClick={handleSave}>Salveaza</button>
+                                            <br/>
+                                            <br/>
+
+                                            <Label className="col-form-label pt-0"> Modifica imaginea (max 1MB din
+                                                motive de performanta) </Label>
+                                            {loadedMedia?.identifier &&
+                                                <MyDropzone mediaFile={loadedMedia?.identifier}/>}
 
                                         </div>
                                     </CardBody>

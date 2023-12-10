@@ -7,10 +7,46 @@ import Datatable from "../common/datatable";
 const OrderInfoTab = ({order}) => {
     const [orderProducts, setOrderProducts] = useState([]); // [ { product: {}, quantity: 1 } ]
 
+    /**
+     * Format softone order status response to have CodCS as key
+     * Example response: {
+     *     "success": true,
+     *     "totalcount": 1,
+     *     "rows": [
+     *         {
+     *             "remarks": "MyG_3720779904",
+     *             "CodProdus": "3519_14_0_0_0_-1_4_-1_-1_-1_-1_-1",
+     *             "QTY": "1",
+     *             "Description": "BRATARA",
+     *             "TransferId": "8513",
+     *             "OrderId": "8514",
+     *             "InvoiceId": "0",
+     *             "AWB": "-",
+     *             "Status": "In curs de procesare"
+     *         }
+     *     ]
+     * }
+     * @returns {Promise<void>}
+     */
+    const formatSoftoneOrderStatus = async () => {
+        const softoneOrderStatus = await axios.get(`${getApiConfig().baseUrl}/order/status/${order.webRefNo}`, {headers: getApiConfig().headers});
+        if (softoneOrderStatus?.data?.rows) {
+            let formattedOrderStatus = {};
+            for (let index in softoneOrderStatus.data.rows) {
+                formattedOrderStatus[softoneOrderStatus.data.rows[index].CodProdus] = softoneOrderStatus.data.rows[index];
+            }
+            return formattedOrderStatus;
+        }
+        return false;
+    }
     const getProductsInfo = async () => {
         let localProducts = [];
         const orderProductIds = order.productIds.split(',');
         const orderProductQuantities = order.quantity.split(',');
+
+        const softoneOrderStatus = await formatSoftoneOrderStatus();
+
+        console.log('softoneOrderStatus: ', softoneOrderStatus);
 
         for (let index in orderProductIds) {
             let response = await axios.get(`${getApiConfig().baseUrl}/articles/${orderProductIds}`, {headers: getApiConfig().headers});
@@ -18,9 +54,12 @@ const OrderInfoTab = ({order}) => {
                 delete response.data['images'];
                 delete response.data['id'];
                 delete response.data['ID_Produs'];
+                console.log('response.data: ', response.data['CodCS']);
+                console.log('softoneOrderStatus[response.data[\'CodCS\']]: ', softoneOrderStatus[response.data['CodCS']]);
                 response.data = {
                     image: <img alt="" src={response.data['Imagine']} style={{width: 100, height: 100}}/>,
                     Nume: response.data['Nume'],
+                    SoftoneOrderStatus: softoneOrderStatus[response.data['CodCS']],
                     Cantitate: orderProductQuantities[index],
                     ...response.data
                 }
@@ -57,6 +96,10 @@ const OrderInfoTab = ({order}) => {
                             <br/>
                             <li>
                                 <strong>Status:</strong> {order.status}
+                            </li>
+                            <br/>
+                            <li>
+                                <strong>Status Softone:</strong> {order.status}
                             </li>
                             {/* Add more order information as needed */}
                         </ul>
