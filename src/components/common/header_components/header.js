@@ -113,32 +113,32 @@ const Header = () => {
                                     {/*<SearchHeader/>*/}
                                     <Button color="primary" onClick={handleErpSync}>Sync ERP</Button>
                                 </li>
-                                <li>
-                                    <a onClick={goFull} className="text-dark" href="#javaScript">
-                                        <Maximize2/>
-                                    </a>
-                                </li>
-                                <li className="onhover-dropdown">
-                                    <a className="txt-dark" href="#javaScript">
-                                        <h6>EN</h6>
-                                    </a>
-                                    <Language/>
-                                </li>
+                                {/*<li>*/}
+                                {/*    <a onClick={goFull} className="text-dark" href="#javaScript">*/}
+                                {/*        <Maximize2/>*/}
+                                {/*    </a>*/}
+                                {/*</li>*/}
+                                {/*<li className="onhover-dropdown">*/}
+                                {/*    <a className="txt-dark" href="#javaScript">*/}
+                                {/*        <h6>EN</h6>*/}
+                                {/*    </a>*/}
+                                {/*    <Language/>*/}
+                                {/*</li>*/}
 
-                                <li className="onhover-dropdown">
-                                    <Bell/>
-                                    <span className="badge rounded-pill badge-primary pull-right notification-badge">
-									3
-								</span>
-                                    <span className="dot"></span>
-                                    <Notification/>
-                                </li>
-                                <li>
-                                    <a href="#javaScript" onClick={showRightSidebar}>
-                                        <MessageSquare/>
-                                        <span className="dot"></span>
-                                    </a>
-                                </li>
+                                {/*<li className="onhover-dropdown">*/}
+                                {/*    <Bell/>*/}
+                                {/*    <span className="badge rounded-pill badge-primary pull-right notification-badge">*/}
+								{/*	3*/}
+								{/*</span>*/}
+                                {/*    <span className="dot"></span>*/}
+                                {/*    <Notification/>*/}
+                                {/*</li>*/}
+                                {/*<li>*/}
+                                {/*    <a href="#javaScript" onClick={showRightSidebar}>*/}
+                                {/*        <MessageSquare/>*/}
+                                {/*        <span className="dot"></span>*/}
+                                {/*    </a>*/}
+                                {/*</li>*/}
                                 <UserMenu/>
                             </ul>
                             <div

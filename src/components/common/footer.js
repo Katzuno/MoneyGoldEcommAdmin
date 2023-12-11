@@ -9,12 +9,12 @@ const Footer = () => {
 					<Row>
 						<Col md="6" className="footer-copyright">
 							<p className="mb-0">
-								Copyright 2022 © MoneyGold All rights reserved.
+								Copyright 2023 © MoneyGold All rights reserved.
 							</p>
 						</Col>
 						<Col md="6">
 							<p className="pull-right mb-0">
-								Hand crafted & made with<i className="fa fa-heart"></i>
+								Developed by IT HIT
 							</p>
 						</Col>
 					</Row>
