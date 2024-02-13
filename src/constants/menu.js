@@ -41,12 +41,12 @@ export const MENUITEMS = [
     {
         title: 'Media', path: '/media', icon: Camera, type: 'link', active: false
     },
-    {
-        title: 'Menus', icon: AlignLeft, type: 'sub', active: false, children: [
-            { path: '/menus/list-menu', title: 'List Menu', type: 'link' },
-            { path: '/menus/create-menu', title: 'Create Menu', type: 'link' },
-        ]
-    },
+    // {
+    //     title: 'Menus', icon: AlignLeft, type: 'sub', active: false, children: [
+    //         { path: '/menus/list-menu', title: 'List Menu', type: 'link' },
+    //         { path: '/menus/create-menu', title: 'Create Menu', type: 'link' },
+    //     ]
+    // },
     {
         title: 'Utilizatori', icon: UserPlus, type: 'sub', active: false, children: [
             { path: '/users/list-user', title: 'Lista utilizatori', type: 'link' },
@@ -56,7 +56,7 @@ export const MENUITEMS = [
     // {
     //     title: 'Reports', path:'/reports/report', icon: BarChart, type: 'link', active: false
     // },
-    {
-        title: 'Facturi', path:'/invoice', icon: Archive, type: 'link', active: false
-    },
+    // {
+    //     title: 'Facturi', path:'/invoice', icon: Archive, type: 'link', active: false
+    // },
 ]

@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import Dropzone from 'react-dropzone-uploader'
 import {getApiConfig} from "../../helpers";
+import {toast} from "react-toastify";
 
 
 const MyUploader = ({
@@ -27,6 +28,7 @@ const MyUploader = ({
     const getUploadParams = () => {
         setDisplay(!display)
        if (mediaIdentifier) {
+           toast.success('Imaginea a fost incarcata cu succes!');
             return {
                 url: `${getApiConfig().baseUrl}/media/${mediaIdentifier}/upload`,
                 headers: {Authorization: getApiConfig().headers.Authorization},

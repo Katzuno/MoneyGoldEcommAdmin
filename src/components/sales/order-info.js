@@ -33,7 +33,7 @@ const OrderInfoTab = ({order}) => {
         if (softoneOrderStatus?.data?.rows) {
             let formattedOrderStatus = {};
             for (let index in softoneOrderStatus.data.rows) {
-                formattedOrderStatus[softoneOrderStatus.data.rows[index].CodProdus] = softoneOrderStatus.data.rows[index];
+                formattedOrderStatus[softoneOrderStatus.data.rows[index].CodProdus] = softoneOrderStatus.data.rows[index]['Status'];
             }
             return formattedOrderStatus;
         }
@@ -54,6 +54,7 @@ const OrderInfoTab = ({order}) => {
                 delete response.data['images'];
                 delete response.data['id'];
                 delete response.data['ID_Produs'];
+                delete response.data['variants'];
                 console.log('response.data: ', response.data['CodCS']);
                 console.log('softoneOrderStatus[response.data[\'CodCS\']]: ', softoneOrderStatus[response.data['CodCS']]);
                 response.data = {
