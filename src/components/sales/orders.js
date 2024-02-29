@@ -36,7 +36,6 @@ const Orders = () => {
 					price: response.data[index]['price'] + ' RON',
 					...response.data[index]
 				}
-
 			}
 			setOrders(response.data);
 		}

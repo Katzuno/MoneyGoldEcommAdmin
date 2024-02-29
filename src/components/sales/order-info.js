@@ -49,7 +49,7 @@ const OrderInfoTab = ({order}) => {
         console.log('softoneOrderStatus: ', softoneOrderStatus);
 
         for (let index in orderProductIds) {
-            let response = await axios.get(`${getApiConfig().baseUrl}/articles/${orderProductIds}`, {headers: getApiConfig().headers});
+            let response = await axios.get(`${getApiConfig().baseUrl}/articles/${orderProductIds[index]}`, {headers: getApiConfig().headers});
             if (response?.data) {
                 delete response.data['images'];
                 delete response.data['id'];
