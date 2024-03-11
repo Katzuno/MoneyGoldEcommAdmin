@@ -271,6 +271,8 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, objectType=
 					pagination={pagination}
 					striped={true}
 					center={true}
+					responsive={true}
+					keyField={"id"}
 				/>
 
 				<ToastContainer />
