@@ -34,6 +34,12 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, objectType=
 
 
 	const handleRemoveRow = async (rowId) => {
+		if (!rowId) {
+			console.log('checkedValues', checkedValues);
+			rowId = checkedValues;
+			return;
+		}
+
 		const updatedData = myData.filter(function (el) {
 			return checkedValues.indexOf(el.id) < 0;
 		});

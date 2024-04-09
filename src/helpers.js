@@ -36,7 +36,8 @@ export function lrt (string) {
 export function getApiConfig() {
     return {
         // baseUrl: "http://localhost:6001",
-        baseUrl: "https://mg-api.wikismarts.com",
+        // baseUrl: "https://mg-api.wikismarts.com",
+        baseUrl: "https://api.mygold.ro",
         headers: {
             "Content-type": "application/json",
             Authorization: `Bearer ${
