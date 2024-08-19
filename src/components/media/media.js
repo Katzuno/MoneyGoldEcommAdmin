@@ -21,6 +21,8 @@ const Media = () => {
                                         style={{width: 100, height: 100}}/>,
                             ...response.data.media[index]
                         }
+                        delete response.data.media[index]['createdAt'];
+                        delete response.data.media[index]['updatedAt'];
                 }
                 setMedia(response.data?.media);
             }
@@ -55,8 +57,8 @@ const Media = () => {
                                 {media.length > 0 && <Datatable
                                     multiSelectOption={false}
                                     myData={media}
-                                    pageSize={10}
-                                    pagination={true}
+                                    pageSize={100}
+                                    pagination={false}
 									objectType={'media'}
                                     class="-striped -highlight"
                                 />

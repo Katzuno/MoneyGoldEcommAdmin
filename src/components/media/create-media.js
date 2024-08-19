@@ -22,6 +22,13 @@ const Create_media = () => {
 
     }
 
+    const deleteMedia = async () => {
+        const response = await axios.delete(`${getApiConfig().baseUrl}/media/${loadedMedia?.identifier}/delete-media`, {headers: getApiConfig().headers});
+        if (response?.status === 200) {
+            toast.success('Imaginea a fost stearsa cu succes!');
+            getMedia((new URLSearchParams(window.location.search)).get('id'));
+        }
+    }
 
     const handleSave = async () => {
         const body = {
@@ -43,6 +50,7 @@ const Create_media = () => {
             // Handle the response as needed
             if (response?.status === 201) {
                 toast.success('Descrierea a fost salvata cu succes!');
+                getMedia((new URLSearchParams(window.location.search)).get('id'));
             }
         } catch (error) {
             // Handle errors
@@ -141,6 +149,9 @@ const Create_media = () => {
                                             <img
                                                 src={`${getApiConfig().baseUrl}/${loadedMedia?.filePath.replace('uploads', '')}`}
                                                 style={{maxWidth: '400px', maxHeight: '400px'}}/>
+
+                                            <br/><br/>
+                                            <button className="btn btn-primary" onClick={() => {deleteMedia()}}> Sterge imaginea </button>
                                         </div>
                                     </CardBody>
                                 </Card>
