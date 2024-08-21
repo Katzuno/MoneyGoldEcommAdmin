@@ -11,6 +11,29 @@ const ListPages = () => {
 
 	const getTranslations = async () => {
 		const response = await axios.get(`${getApiConfig().baseUrl}/translations`, {headers: getApiConfig().headers});
+
+		for (let translation of response.data) {
+			delete translation['createdAt'];
+		}
+
+		// Sort translations first by key "page" and then by key "stringIdentifier"
+		response.data.sort((a, b) => {
+			if (a.page < b.page) {
+				return -1;
+			}
+			if (a.page > b.page) {
+				return 1;
+			}
+			if (a.stringIdentifier < b.stringIdentifier) {
+				return -1;
+			}
+			if (a.stringIdentifier > b.stringIdentifier) {
+				return 1;
+			}
+			return 0;
+
+		});
+		console.log('translations', response.data);
 		setTranslations(response.data);
 	}
 

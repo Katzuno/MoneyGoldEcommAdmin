@@ -23,6 +23,8 @@ const Media = () => {
                         }
                         delete response.data.media[index]['createdAt'];
                         delete response.data.media[index]['updatedAt'];
+                        delete response.data.media[index]['filePath'];
+                        delete response.data.media[index]['alt'];
                 }
                 setMedia(response.data?.media);
             }
