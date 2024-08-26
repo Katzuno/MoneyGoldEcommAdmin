@@ -13,7 +13,7 @@ const OrderDetail = () => {
 	const getOrder = async (id) => {
 		const response = await axios.get(`${getApiConfig().baseUrl}/order/${id}`, {headers: getApiConfig().headers});
 		if (response?.data) {
-			console.log(response.data);
+			console.log('loaded order: ', response.data);
 			setLoadedOrder(response.data);
 		}
 

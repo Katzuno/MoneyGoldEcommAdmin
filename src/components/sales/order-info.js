@@ -35,6 +35,7 @@ const OrderInfoTab = ({order}) => {
             for (let index in softoneOrderStatus.data.rows) {
                 formattedOrderStatus[softoneOrderStatus.data.rows[index].CodProdus] = softoneOrderStatus.data.rows[index]['Status'];
             }
+            console.log('formattedOrderStatus: ', formattedOrderStatus);
             return formattedOrderStatus;
         }
         return false;
@@ -96,11 +97,7 @@ const OrderInfoTab = ({order}) => {
                             </li>
                             <br/>
                             <li>
-                                <strong>Status:</strong> {order.status}
-                            </li>
-                            <br/>
-                            <li>
-                                <strong>Status Softone:</strong> {order.status}
+                                <strong>Status Web:</strong> {order.status}
                             </li>
                             {/* Add more order information as needed */}
                         </ul>
@@ -108,11 +105,11 @@ const OrderInfoTab = ({order}) => {
                     <td>
                         <ul>
                             <li>
-                                <strong>Email:</strong> {order.user.email}
+                                <strong>Email:</strong> {order?.user?.email}
                             </li>
                             <br/>
                             <li>
-                                <strong>Nume Complet:</strong> {order.user.fullName}
+                                <strong>Nume Complet:</strong> {order?.user?.fullName}
                             </li>
                         </ul>
                     </td>
