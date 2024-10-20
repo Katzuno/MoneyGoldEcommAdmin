@@ -53,7 +53,7 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, objectType=
 			response = await axios.delete(`${getApiConfig().baseUrl}/articles/${rowId}`, {headers: getApiConfig().headers});
 		}
 		if (objectType === 'order') {
-			response = await axios.delete(`${getApiConfig().baseUrl}/orders/${rowId}`, {headers: getApiConfig().headers});
+			response = await axios.delete(`${getApiConfig().baseUrl}/order/${rowId}`, {headers: getApiConfig().headers});
 		}
 		if (objectType === 'user') {
 			response = await axios.delete(`${getApiConfig().baseUrl}/users/${rowId}`, {headers: getApiConfig().headers});

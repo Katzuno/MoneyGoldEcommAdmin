@@ -105,7 +105,7 @@ const OrderInfoTab = ({order}) => {
                     <td>
                         <ul>
                             <li>
-                                <strong>Email:</strong> {order?.user?.email}
+                                <strong>Email:</strong> {order?.user?.email ?? order?.billingAddressModel?.email}
                             </li>
                             <br/>
                             <li>
@@ -124,7 +124,7 @@ const OrderInfoTab = ({order}) => {
                 <tr>
                     <td colSpan="2">
                         <address>
-                            {order.deliveryAddressModel.street}, {order.deliveryAddressModel.city}, {order.deliveryAddressModel.state}
+                            {order.deliveryAddressModel.street}, {order.deliveryAddressModel.city}, {order.deliveryAddressModel.state}, {order?.deliveryAddressModel?.phone}
                         </address>
                     </td>
                 </tr>
@@ -138,7 +138,7 @@ const OrderInfoTab = ({order}) => {
                 <tr>
                     <td colSpan="2">
                         <address>
-                            {order.billingAddressModel.street}, {order.billingAddressModel.city}, {order.billingAddressModel.state}
+                            {order.billingAddressModel.street}, {order.billingAddressModel.city}, {order.billingAddressModel.state}, {order?.billingAddressModel?.phone}
                         </address>
                     </td>
                 </tr>
