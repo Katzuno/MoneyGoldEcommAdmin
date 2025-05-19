@@ -38,6 +38,7 @@ export function getApiConfig() {
         // baseUrl: "http://localhost:6001",
         // baseUrl: "https://mg-api.wikismarts.com",
         baseUrl: "https://api.mygold.ro",
+        // baseUrl: "https://dev-api.mygold.ro",
         headers: {
             "Content-type": "application/json",
             Authorization: `Bearer ${
