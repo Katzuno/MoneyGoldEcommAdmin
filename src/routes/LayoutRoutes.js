@@ -34,6 +34,8 @@ import Listvendors from '../components/vendors/list-vendors'
 import ListProducts from "../components/products/physical/list-products";
 import OrderDetail from "../components/sales/order-detail";
 import Create_media from "../components/media/create-media";
+import CreateStore from "../components/stores/create-stores";
+import ListStores from "../components/stores/list-stores";
 
 const LayoutRoutes = () => {
   return (
@@ -147,6 +149,19 @@ const LayoutRoutes = () => {
 						<Route
 							path={`${process.env.PUBLIC_URL}/vendors/create-vendors`}
 							element={<Createvendors />}
+						/>
+
+						<Route
+							path={`${process.env.PUBLIC_URL}/stores/list-stores`}
+							element={<ListStores />}
+						/>
+						<Route
+							path={`${process.env.PUBLIC_URL}/stores/create-store`}
+							element={<CreateStore />}
+						/>
+						<Route
+							path={`${process.env.PUBLIC_URL}/stores/edit-store`}
+							element={<CreateStore />}
 						/>
 
 						<Route

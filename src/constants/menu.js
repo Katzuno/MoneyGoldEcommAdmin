@@ -9,7 +9,7 @@ import {
     UserPlus,
     Users,
     Chrome,
-    BarChart, Settings, Archive, LogIn, DivideCircle
+    BarChart, Settings, Archive, LogIn, DivideCircle, MapPin
 } from 'react-feather';
 
 export const MENUITEMS = [
@@ -51,6 +51,12 @@ export const MENUITEMS = [
         title: 'Utilizatori', icon: UserPlus, type: 'sub', active: false, children: [
             { path: '/users/list-user', title: 'Lista utilizatori', type: 'link' },
             // { path: '/users/create-user', title: 'Create User', type: 'link' },
+        ]
+    },
+    {
+        title: 'Magazine', icon: MapPin, type: 'sub', active: false, children: [
+            { path: '/stores/list-stores', title: 'Lista magazine', type: 'link' },
+            { path: '/stores/create-store', title: 'Creează magazin', type: 'link' },
         ]
     },
     // {

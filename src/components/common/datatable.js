@@ -17,7 +17,7 @@ import {getApiConfig} from "../../helpers";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 
-const Datatable = ({ myData, myClass, multiSelectOption, pagination, objectType='' }) => {
+const Datatable = ({ myData, myClass, multiSelectOption, pagination, objectType='', onDataChange, onRefresh }) => {
 	const [open, setOpen] = useState(false);
 	const [checkedValues, setCheckedValues] = useState([]);
 	const [data, setData] = useState(myData);
@@ -58,8 +58,20 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, objectType=
 		if (objectType === 'user') {
 			response = await axios.delete(`${getApiConfig().baseUrl}/users/${rowId}`, {headers: getApiConfig().headers});
 		}
+		if (objectType === 'store') {
+			response = await axios.delete(`${getApiConfig().baseUrl}/store/${rowId}`, {headers: getApiConfig().headers});
+		}
 		if (response?.status === 200 || response?.status === 204) {
-			setData([...updatedData]);
+			// If onRefresh callback is provided, use it to refetch data from server
+			if (onRefresh) {
+				onRefresh();
+			} else {
+				// Fallback to local state update
+				setData([...updatedData]);
+				if (onDataChange) {
+					onDataChange([...updatedData]);
+				}
+			}
 			toast.success("Stergere efectuata cu success !");
 		}
 	};
@@ -79,6 +91,9 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, objectType=
 		}
 		if (objectType === 'media') {
 			navigate(`/media/edit-media?id=${rowId}`);
+		}
+		if (objectType === 'store') {
+			navigate(`/stores/edit-store?id=${rowId}`);
 		}
 	};
 
@@ -120,6 +135,13 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, objectType=
 	};
 
 	const columns = [];
+	if (!myData || myData.length === 0) {
+		return (
+			<div className="text-center p-4">
+				No data available
+			</div>
+		);
+	}
 	for (const key in myData[0]) {
 		let editable = renderEditable;
 		if (key === "image") {
