@@ -17,26 +17,82 @@ const List_stores = () => {
 		try {
 			let response = await axios.get(`${getApiConfig().baseUrl}/store`, {headers: getApiConfig().headers});
 			if (response?.data && Array.isArray(response.data)) {
-				// Add image preview column like media component
+				// Add image preview column showing both MainImage and AdditionalImages
 				const storesWithImages = response.data.map(store => ({
-					image: store.MainImage ? (
-						<img
-							alt=""
-							src={store.MainImage}
-							style={{width: 80, height: 80, objectFit: 'cover'}}
-						/>
-					) : (
-						<div style={{
-							width: 80,
-							height: 80,
-							backgroundColor: '#f8f9fa',
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							border: '1px solid #dee2e6',
-							borderRadius: '4px'
-						}}>
-							<span style={{color: '#6c757d', fontSize: '12px'}}>No image</span>
+					image: (
+						<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+							{/* Main Image */}
+							{store.MainImage ? (
+								<img
+									alt="Main"
+									src={store.MainImage}
+									style={{width: 60, height: 60, objectFit: 'cover', borderRadius: '4px'}}
+									title="Main Image"
+								/>
+							) : (
+								<div style={{
+									width: 60,
+									height: 60,
+									backgroundColor: '#f8f9fa',
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									border: '1px solid #dee2e6',
+									borderRadius: '4px'
+								}}>
+									<span style={{color: '#6c757d', fontSize: '10px'}}>No main</span>
+								</div>
+							)}
+
+							{/* Additional Images */}
+							{Array.isArray(store.AdditionalImages) && store.AdditionalImages.length > 0 && (
+								<div style={{
+									display: 'flex',
+									flexWrap: 'wrap',
+									gap: '2px',
+									justifyContent: 'center',
+									maxWidth: '80px'
+								}}>
+									{store.AdditionalImages.slice(0, 3).map((image, index) => {
+										// Handle both string URLs and object URLs
+										const imageUrl = typeof image === 'string' ? image : image.url;
+										return (
+											<img
+												key={index}
+												alt={`Additional ${index + 1}`}
+												src={imageUrl}
+												style={{
+													width: '20px',
+													height: '20px',
+													objectFit: 'cover',
+													borderRadius: '2px',
+													border: '1px solid #dee2e6'
+												}}
+												title={`Additional Image ${index + 1}`}
+												onError={(e) => {
+													e.target.style.display = 'none';
+												}}
+											/>
+										);
+									})}
+									{store.AdditionalImages.length > 3 && (
+										<div style={{
+											width: '20px',
+											height: '20px',
+											backgroundColor: '#e9ecef',
+											display: 'flex',
+											alignItems: 'center',
+											justifyContent: 'center',
+											borderRadius: '2px',
+											border: '1px solid #dee2e6',
+											fontSize: '8px',
+											color: '#495057'
+										}}>
+											+{store.AdditionalImages.length - 3}
+										</div>
+									)}
+								</div>
+							)}
 						</div>
 					),
 					...store

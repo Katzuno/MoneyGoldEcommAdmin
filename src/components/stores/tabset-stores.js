@@ -30,6 +30,22 @@ const TabsetStore = ({ storeId, onSave }) => {
 				headers: getApiConfig().headers
 			});
 			const storeData = response.data;
+
+			// Handle AdditionalImages - can be array of strings (legacy) or objects with url property
+			let cleanedAdditionalImages = [];
+			if (Array.isArray(storeData.AdditionalImages)) {
+				cleanedAdditionalImages = storeData.AdditionalImages.filter(image => {
+					if (typeof image === 'string') {
+						// Legacy format: array of URLs
+						return image.trim().length > 0 && !image.includes('[') && !image.includes(']');
+					} else if (typeof image === 'object' && image.url) {
+						// New format: array of objects with url property
+						return typeof image.url === 'string' && image.url.trim().length > 0;
+					}
+					return false;
+				});
+			}
+
 			setStore({
 				Name: storeData.Name || '',
 				Adresa: storeData.Adresa || '',
@@ -40,7 +56,7 @@ const TabsetStore = ({ storeId, onSave }) => {
 				MapsURL: storeData.MapsURL || '',
 				AvailableServices: storeData.AvailableServices || '',
 				MainImage: storeData.MainImage || null,
-				AdditionalImages: Array.isArray(storeData.AdditionalImages) ? storeData.AdditionalImages : []
+				AdditionalImages: cleanedAdditionalImages
 			});
 		} catch (error) {
 			console.error('Error fetching store:', error);
@@ -67,6 +83,7 @@ const TabsetStore = ({ storeId, onSave }) => {
 		}
 	}, [storeId, fetchStore]);
 
+
 	const handleInputChange = (e) => {
 		const { name, value, type, checked } = e.target;
 		setStore(prev => ({
@@ -87,6 +104,10 @@ const TabsetStore = ({ storeId, onSave }) => {
 		setAdditionalImageFiles(prev => [...prev, ...files]);
 	};
 
+	const removeAdditionalImage = (indexToRemove) => {
+		setAdditionalImageFiles(prev => prev.filter((_, index) => index !== indexToRemove));
+	};
+
 	const uploadMainImage = async (storeId) => {
 		if (!mainImageFile) return;
 
@@ -94,12 +115,20 @@ const TabsetStore = ({ storeId, onSave }) => {
 		formData.append('file', mainImageFile);
 
 		try {
-			await axios.post(`${getApiConfig().baseUrl}/store/${storeId}/upload-main-image`, formData, {
+			const response = await axios.post(`${getApiConfig().baseUrl}/store/${storeId}/upload-main-image`, formData, {
 				headers: {
 					...getApiConfig().headers,
 					'Content-Type': 'multipart/form-data'
 				}
 			});
+
+			// Update local state with the response data to show uploaded image immediately
+			if (response.data && response.data.MainImage) {
+				setStore(prev => ({
+					...prev,
+					MainImage: response.data.MainImage
+				}));
+			}
 		} catch (error) {
 			console.error('Error uploading main image:', error);
 			toast.error('Eroare la încărcarea imaginii principale.');
@@ -107,21 +136,47 @@ const TabsetStore = ({ storeId, onSave }) => {
 	};
 
 	const uploadAdditionalImages = async (storeId) => {
+		let lastResponse = null;
+
 		for (const file of additionalImageFiles) {
 			const formData = new FormData();
 			formData.append('file', file);
 
 			try {
-				await axios.post(`${getApiConfig().baseUrl}/store/${storeId}/upload-additional-image`, formData, {
+				const response = await axios.post(`${getApiConfig().baseUrl}/store/${storeId}/upload-additional-image`, formData, {
 					headers: {
 						...getApiConfig().headers,
 						'Content-Type': 'multipart/form-data'
 					}
 				});
+				lastResponse = response; // Keep track of the last response
 			} catch (error) {
 				console.error('Error uploading additional image:', error);
 				toast.error(`Eroare la încărcarea imaginii suplimentare: ${file.name}`);
 			}
+		}
+
+		// Update local state with the latest response data to show all uploaded images immediately
+		if (lastResponse && lastResponse.data && Array.isArray(lastResponse.data.AdditionalImages)) {
+			// Handle AdditionalImages - can be array of strings or objects with url property
+			const cleanedAdditionalImages = lastResponse.data.AdditionalImages.filter(image => {
+				if (typeof image === 'string') {
+					// Legacy format: array of URLs
+					return image.trim().length > 0 && !image.includes('[') && !image.includes(']');
+				} else if (typeof image === 'object' && image.url) {
+					// New format: array of objects with url property
+					return typeof image.url === 'string' && image.url.trim().length > 0;
+				}
+				return false;
+			});
+
+			setStore(prev => ({
+				...prev,
+				AdditionalImages: cleanedAdditionalImages
+			}));
+
+			// Clear the additional image files state since they have been uploaded
+			setAdditionalImageFiles([]);
 		}
 	};
 
@@ -131,15 +186,19 @@ const TabsetStore = ({ storeId, onSave }) => {
 
 		try {
 			let response;
+			// Send the core store data with empty arrays for images
+			// Images are handled via separate upload endpoints, but we need to initialize empty arrays
 			const storeData = {
-				Name: store.Name,
-				Adresa: store.Adresa,
-				Schedule: store.Schedule,
-				Phone: store.Phone,
-				Latitude: store.Latitude,
-				Longitude: store.Longitude,
-				MapsURL: store.MapsURL,
-				AvailableServices: store.AvailableServices
+				Name: store.Name?.trim(),
+				Adresa: store.Adresa?.trim(),
+				Schedule: store.Schedule?.trim(),
+				Phone: store.Phone?.trim(),
+				Latitude: store.Latitude?.trim(),
+				Longitude: store.Longitude?.trim(),
+				MapsURL: store.MapsURL?.trim(),
+				AvailableServices: store.AvailableServices?.trim(),
+				MainImage: null,
+				AdditionalImages: []
 			};
 
 			if (storeId) {
@@ -164,6 +223,10 @@ const TabsetStore = ({ storeId, onSave }) => {
 
 			// Show success toast
 			toast.success(storeId ? 'Magazin actualizat cu succes!' : 'Magazin creat cu succes!');
+
+			// Reset image file states after successful save
+			setMainImageFile(null);
+			setAdditionalImageFiles([]);
 
 			if (onSave) {
 				onSave(response.data);
@@ -372,29 +435,85 @@ const TabsetStore = ({ storeId, onSave }) => {
 								/>
 								{Array.isArray(store.AdditionalImages) && store.AdditionalImages.length > 0 && (
 									<div className="mt-2">
-										<h6>Imagini existente:</h6>
+										<h6>Imagini suplimentare existente:</h6>
 										<div className="d-flex flex-wrap gap-2">
-											{store.AdditionalImages.map((image, index) => (
-												<img
-													key={index}
-													src={image}
-													alt={`Additional ${index + 1}`}
-													style={{ width: '80px', height: '80px', objectFit: 'cover' }}
-												/>
-											))}
+											{store.AdditionalImages.map((image, index) => {
+												// Handle both string URLs and object URLs
+												const imageUrl = typeof image === 'string' ? image : image.url;
+												const imageAlt = typeof image === 'object' && image.alt ? image.alt : `Imagine suplimentară ${index + 1}`;
+
+												return (
+													<div key={index} className="position-relative">
+														<img
+															src={imageUrl}
+															alt={imageAlt}
+															style={{
+																width: '100px',
+																height: '100px',
+																objectFit: 'cover',
+																borderRadius: '4px',
+																border: '2px solid #dee2e6'
+															}}
+															onError={(e) => {
+																console.error('Failed to load image:', imageUrl);
+																e.target.style.display = 'none';
+															}}
+														/>
+														<div className="mt-1">
+															<small className="text-muted">Imagine {index + 1}</small>
+														</div>
+													</div>
+												);
+											})}
 										</div>
 									</div>
 								)}
 								{additionalImageFiles.length > 0 && (
 									<div className="mt-2">
 										<h6>Imagini noi de încărcat:</h6>
-										<ul>
+										<div className="d-flex flex-wrap gap-2">
 											{additionalImageFiles.map((file, index) => (
-												<li key={index} style={{display: 'block'}}>
-													<small>{file.name} &nbsp; {parseFloat(file.size / 1024).toFixed(2)} KB </small>
-												</li>
+												<div key={index} className="text-center position-relative">
+													<button
+														type="button"
+														className="btn btn-sm btn-danger position-absolute"
+														style={{
+															top: '-8px',
+															right: '-8px',
+															width: '20px',
+															height: '20px',
+															borderRadius: '50%',
+															padding: '0',
+															fontSize: '12px',
+															lineHeight: '1'
+														}}
+														onClick={() => removeAdditionalImage(index)}
+														title="Elimină imaginea"
+													>
+														×
+													</button>
+													<img
+														src={URL.createObjectURL(file)}
+														alt={`New ${index + 1}`}
+														style={{
+															width: '80px',
+															height: '80px',
+															objectFit: 'cover',
+															borderRadius: '4px',
+															border: '1px solid #dee2e6'
+														}}
+													/>
+													<div className="mt-1">
+														<small className="text-muted d-block" style={{fontSize: '10px', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+															{file.name}
+														</small>
+														<small className="text-muted" style={{fontSize: '9px'}}>
+															{parseFloat(file.size / 1024).toFixed(1)} KB
+														</small>
+													</div>
+												</div>
 											))}
-										</ul>
+										</div>
 									</div>
 								)}
 							</div>

@@ -1,0 +1,513 @@
+openapi: 3.0.0
+info:
+  title: MyGold E-commerce API
+  description: |
+    Complete API documentation for the MyGold e-commerce backend system.
+    This API provides endpoints for managing products, stores, users, orders, and more.
+  version: 1.0.0
+  contact:
+    name: MyGold Development Team
+    email: dev@mygold.ro
+  license:
+    name: UNLICENSED
+    url: https://opensource.org/licenses/unlicensed
+
+servers:
+  - url: http://localhost:6001
+    description: Development server
+  - url: https://api.mygold.ro
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Users
+    description: User management operations
+  - name: Products
+    description: Product/article management
+  - name: Categories
+    description: Product categories
+  - name: Stores
+    description: Store management with image uploads
+  - name: Orders
+    description: Order processing and management
+  - name: Addresses
+    description: User address management
+  - name: Media
+    description: File upload and media management
+
+paths:
+  # Store endpoints
+  /store:
+    get:
+      tags:
+        - Stores
+      summary: Get all stores
+      description: Retrieve a list of all stores with their complete information including images
+      operationId: getAllStores
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Store'
+    post:
+      tags:
+        - Stores
+      summary: Create a new store
+      description: Create a new store with basic information. Images can be uploaded separately.
+      operationId: createStore
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateStoreDto'
+      responses:
+        '201':
+          description: Store created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '400':
+          description: Invalid input data
+        '401':
+          description: Unauthorized
+
+  /store/{id}:
+    get:
+      tags:
+        - Stores
+      summary: Get store by ID
+      description: Retrieve detailed information about a specific store
+      operationId: getStoreById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Store ID
+          schema:
+            type: integer
+            format: int32
+            example: 1
+      responses:
+        '200':
+          description: Store found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '404':
+          description: Store not found
+    put:
+      tags:
+        - Stores
+      summary: Update store
+      description: Update store information
+      operationId: updateStore
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Store ID
+          schema:
+            type: integer
+            format: int32
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStoreDto'
+      responses:
+        '200':
+          description: Store updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '400':
+          description: Invalid input data
+        '401':
+          description: Unauthorized
+        '404':
+          description: Store not found
+    delete:
+      tags:
+        - Stores
+      summary: Delete store
+      description: Delete a store by ID
+      operationId: deleteStore
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Store ID
+          schema:
+            type: integer
+            format: int32
+            example: 1
+      responses:
+        '200':
+          description: Store deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Store not found
+
+  /store/{id}/upload-main-image:
+    post:
+      tags:
+        - Stores
+      summary: Upload main store image
+      description: |
+        Upload and set the main image for a store.
+        The image file will be stored on the server and the store record will be updated with the file path.
+        The API response will include the full URL to the uploaded image.
+      operationId: uploadMainImage
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Store ID
+          schema:
+            type: integer
+            format: int32
+            example: 1
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Image file to upload (JPEG, PNG, etc.)
+            encoding:
+              file:
+                contentType: image/*
+      responses:
+        '200':
+          description: Main image uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '400':
+          description: Invalid file or upload failed
+        '401':
+          description: Unauthorized
+        '404':
+          description: Store not found
+
+  /store/{id}/upload-additional-image:
+    post:
+      tags:
+        - Stores
+      summary: Upload additional store image
+      description: |
+        Upload an additional image for a store.
+        The image will be added to the store's additional images array.
+        Multiple images can be uploaded by calling this endpoint multiple times.
+      operationId: uploadAdditionalImage
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Store ID
+          schema:
+            type: integer
+            format: int32
+            example: 1
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Image file to upload (JPEG, PNG, etc.)
+            encoding:
+              file:
+                contentType: image/*
+      responses:
+        '200':
+          description: Additional image uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '400':
+          description: Invalid file or upload failed
+        '401':
+          description: Unauthorized
+        '404':
+          description: Store not found
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT Authorization header using the Bearer scheme.
+        Example: "Authorization: Bearer {token}"
+
+  schemas:
+    Store:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Unique identifier for the store
+          example: 1
+          readOnly: true
+        Name:
+          type: string
+          description: Store name
+          example: "Gold Shop Bucharest"
+          minLength: 1
+          maxLength: 255
+        Adresa:
+          type: string
+          description: Store physical address
+          example: "Strada Victoriei 123, Bucharest"
+          minLength: 1
+          maxLength: 500
+        Schedule:
+          type: string
+          description: Store operating hours/schedule
+          example: "Mon-Fri: 9:00-18:00, Sat: 9:00-14:00"
+          minLength: 1
+          maxLength: 255
+        Phone:
+          type: string
+          description: Store contact phone number
+          example: "+40 21 123 4567"
+          minLength: 1
+          maxLength: 20
+        Latitude:
+          type: string
+          description: Geographic latitude coordinate
+          example: "44.4268"
+          pattern: '^-?([1-8]?\d(\.\d+)?|90(\.0+)?)$'
+        Longitude:
+          type: string
+          description: Geographic longitude coordinate
+          example: "26.1025"
+          pattern: '^-?((1[0-7]|[1-9])?\d(\.\d+)?|180(\.0+)?)$'
+        MapsURL:
+          type: string
+          format: uri
+          description: Google Maps URL for the store location
+          example: "https://maps.google.com/?q=44.4268,26.1025"
+        AvailableServices:
+          type: string
+          description: Description of services available at the store
+          example: "Gold buying, Jewelry repair, Watch servicing, Pawn services"
+        MainImage:
+          type: string
+          format: uri
+          description: Full URL to the main store image
+          example: "https://api.mygold.ro/stores/store-main-1234567890.jpg"
+          nullable: true
+        AdditionalImages:
+          type: array
+          description: Array of additional store image objects
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                format: uri
+                description: Full URL to the additional store image
+                example: "https://api.mygold.ro/stores/store-1-1234567890.jpg"
+              alt:
+                type: string
+                description: Alternative text for the image
+                example: "Additional image for MyGold Store"
+              identifier:
+                type: string
+                description: Unique identifier for the image
+                example: "store-1-additional-1234567890-mygold-store"
+            required:
+              - url
+              - alt
+              - identifier
+          default: []
+      required:
+        - id
+        - Name
+        - Adresa
+        - Schedule
+        - Phone
+        - Latitude
+        - Longitude
+        - MapsURL
+        - AvailableServices
+        - AdditionalImages
+
+    CreateStoreDto:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: Store name
+          example: "Gold Shop Bucharest"
+          minLength: 1
+          maxLength: 255
+        Adresa:
+          type: string
+          description: Store physical address
+          example: "Strada Victoriei 123, Bucharest"
+          minLength: 1
+          maxLength: 500
+        Schedule:
+          type: string
+          description: Store operating hours/schedule
+          example: "Mon-Fri: 9:00-18:00, Sat: 9:00-14:00"
+          minLength: 1
+          maxLength: 255
+        Phone:
+          type: string
+          description: Store contact phone number
+          example: "+40 21 123 4567"
+          minLength: 1
+          maxLength: 20
+        Latitude:
+          type: string
+          description: Geographic latitude coordinate
+          example: "44.4268"
+          pattern: '^-?([1-8]?\d(\.\d+)?|90(\.0+)?)$'
+        Longitude:
+          type: string
+          description: Geographic longitude coordinate
+          example: "26.1025"
+          pattern: '^-?((1[0-7]|[1-9])?\d(\.\d+)?|180(\.0+)?)$'
+        MapsURL:
+          type: string
+          format: uri
+          description: Google Maps URL for the store location
+          example: "https://maps.google.com/?q=44.4268,26.1025"
+        AvailableServices:
+          type: string
+          description: Description of services available at the store
+          example: "Gold buying, Jewelry repair, Watch servicing, Pawn services"
+        MainImage:
+          type: string
+          description: File path for the main store image (set via upload endpoint)
+          example: "uploads/stores/store-main-1234567890.jpg"
+        AdditionalImages:
+          type: array
+          description: Array of file paths for additional store images
+          items:
+            type: string
+            example: "uploads/stores/store-1-1234567890.jpg"
+      required:
+        - Name
+        - Adresa
+        - Schedule
+        - Phone
+        - Latitude
+        - Longitude
+        - MapsURL
+        - AvailableServices
+
+    UpdateStoreDto:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: Store name
+          example: "Gold Shop Bucharest"
+          minLength: 1
+          maxLength: 255
+        Adresa:
+          type: string
+          description: Store physical address
+          example: "Strada Victoriei 123, Bucharest"
+          minLength: 1
+          maxLength: 500
+        Schedule:
+          type: string
+          description: Store operating hours/schedule
+          example: "Mon-Fri: 9:00-18:00, Sat: 9:00-14:00"
+          minLength: 1
+          maxLength: 255
+        Phone:
+          type: string
+          description: Store contact phone number
+          example: "+40 21 123 4567"
+          minLength: 1
+          maxLength: 20
+        Latitude:
+          type: string
+          description: Geographic latitude coordinate
+          example: "44.4268"
+          pattern: '^-?([1-8]?\d(\.\d+)?|90(\.0+)?)$'
+        Longitude:
+          type: string
+          description: Geographic longitude coordinate
+          example: "26.1025"
+          pattern: '^-?((1[0-7]|[1-9])?\d(\.\d+)?|180(\.0+)?)$'
+        MapsURL:
+          type: string
+          format: uri
+          description: Google Maps URL for the store location
+          example: "https://maps.google.com/?q=44.4268,26.1025"
+        AvailableServices:
+          type: string
+          description: Description of services available at the store
+          example: "Gold buying, Jewelry repair, Watch servicing, Pawn services"
+        MainImage:
+          type: string
+          description: File path for the main store image (set via upload endpoint)
+          example: "uploads/stores/store-main-1234567890.jpg"
+        AdditionalImages:
+          type: array
+          description: Array of file paths for additional store images
+          items:
+            type: string
+            example: "uploads/stores/store-1-1234567890.jpg"
+
+    Error:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+          description: Error message or array of error messages
+          example: "Validation failed"
+        error:
+          type: string
+          description: Error type
+          example: "Bad Request"
