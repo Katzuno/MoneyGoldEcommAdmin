@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback } from "react";
 import { Tabs, TabList, TabPanel, Tab } from "react-tabs";
-import { Button, Form, FormGroup, Input, Label, Row, Col } from "reactstrap";
+import { Button, Form, FormGroup, Input, Label, Row, Col, Modal, ModalHeader, ModalBody } from "reactstrap";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -23,6 +23,7 @@ const TabsetStore = ({ storeId, onSave }) => {
 	const [loading, setLoading] = useState(false);
 	const [mainImageFile, setMainImageFile] = useState(null);
 	const [additionalImageFiles, setAdditionalImageFiles] = useState([]);
+	const [imageModal, setImageModal] = useState({ isOpen: false, imageUrl: '', alt: '' });
 
 	const fetchStore = useCallback(async () => {
 		try {
@@ -106,6 +107,14 @@ const TabsetStore = ({ storeId, onSave }) => {
 
 	const removeAdditionalImage = (indexToRemove) => {
 		setAdditionalImageFiles(prev => prev.filter((_, index) => index !== indexToRemove));
+	};
+
+	const openImageModal = (imageUrl, alt) => {
+		setImageModal({ isOpen: true, imageUrl, alt });
+	};
+
+	const closeImageModal = () => {
+		setImageModal({ isOpen: false, imageUrl: '', alt: '' });
 	};
 
 	const uploadMainImage = async (storeId) => {
@@ -227,6 +236,12 @@ const TabsetStore = ({ storeId, onSave }) => {
 			// Reset image file states after successful save
 			setMainImageFile(null);
 			setAdditionalImageFiles([]);
+
+			// If this was a new store creation, redirect to edit mode
+			if (!storeId && savedStoreId) {
+				window.location.href = `/stores/edit-store?id=${savedStoreId}`;
+				return; // Exit early to prevent further execution
+			}
 
 			if (onSave) {
 				onSave(response.data);
@@ -410,7 +425,15 @@ const TabsetStore = ({ storeId, onSave }) => {
 										<img
 											src={store.MainImage}
 											alt="Main store"
-											style={{ maxWidth: '200px', maxHeight: '200px' }}
+											style={{
+												maxWidth: '200px',
+												maxHeight: '200px',
+												cursor: 'pointer',
+												borderRadius: '4px',
+												border: '1px solid #dee2e6'
+											}}
+											title="Click to view full size"
+											onClick={() => openImageModal(store.MainImage, 'Main store image')}
 										/>
 									</div>
 								)}
@@ -452,8 +475,11 @@ const TabsetStore = ({ storeId, onSave }) => {
 																height: '100px',
 																objectFit: 'cover',
 																borderRadius: '4px',
-																border: '2px solid #dee2e6'
+																border: '2px solid #dee2e6',
+																cursor: 'pointer'
 															}}
+															title="Click to view full size"
+															onClick={() => openImageModal(imageUrl, imageAlt)}
 															onError={(e) => {
 																console.error('Failed to load image:', imageUrl);
 																e.target.style.display = 'none';
@@ -526,6 +552,30 @@ const TabsetStore = ({ storeId, onSave }) => {
 					</Button>
 				</div>
 			</Form>
+
+			{/* Image Modal */}
+			<Modal isOpen={imageModal.isOpen} toggle={closeImageModal} size="lg" centered>
+				<ModalHeader toggle={closeImageModal}>
+					{imageModal.alt}
+				</ModalHeader>
+				<ModalBody className="text-center">
+					<img
+						src={imageModal.imageUrl}
+						alt={imageModal.alt}
+						style={{
+							maxWidth: '100%',
+							maxHeight: '70vh',
+							objectFit: 'contain',
+							borderRadius: '8px',
+							boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+						}}
+						onError={(e) => {
+							console.error('Failed to load modal image:', imageModal.imageUrl);
+							closeImageModal();
+						}}
+					/>
+				</ModalBody>
+			</Modal>
 		</Fragment>
 	);
 };
