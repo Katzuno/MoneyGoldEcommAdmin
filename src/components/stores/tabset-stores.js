@@ -109,6 +109,55 @@ const TabsetStore = ({ storeId, onSave }) => {
 		setAdditionalImageFiles(prev => prev.filter((_, index) => index !== indexToRemove));
 	};
 
+	const deleteAdditionalImage = async (imageIndex, imageIdentifier) => {
+		try {
+			// First, delete the media file
+			const deleteResponse = await axios.delete(`${getApiConfig().baseUrl}/media/${imageIdentifier}/delete-media`, {
+				headers: getApiConfig().headers
+			});
+
+			if (deleteResponse.status === 200) {
+				// Then update the store to remove the image from AdditionalImages array
+				const updatedAdditionalImages = store.AdditionalImages.filter((_, index) => index !== imageIndex);
+
+				const updateResponse = await axios.put(`${getApiConfig().baseUrl}/store/${storeId}`, {
+					Name: store.Name,
+					Adresa: store.Adresa,
+					Schedule: store.Schedule,
+					Phone: store.Phone,
+					Latitude: store.Latitude,
+					Longitude: store.Longitude,
+					MapsURL: store.MapsURL,
+					AvailableServices: store.AvailableServices,
+					MainImage: null, // Keep existing main image
+					AdditionalImages: updatedAdditionalImages.map(image => {
+						// Convert objects to strings for the API
+						if (typeof image === 'string') {
+							return image;
+						} else if (typeof image === 'object' && image.url) {
+							return image.url;
+						}
+						return null;
+					}).filter(url => url !== null) // Remove null values
+				}, {
+					headers: getApiConfig().headers
+				});
+
+				if (updateResponse.status === 200) {
+					// Update local state only after successful backend update
+					setStore(prev => ({
+						...prev,
+						AdditionalImages: updatedAdditionalImages
+					}));
+					toast.success('Imaginea suplimentară a fost ștearsă cu succes!');
+				}
+			}
+		} catch (error) {
+			console.error('Error deleting additional image:', error);
+			toast.error('Eroare la ștergerea imaginii suplimentare.');
+		}
+	};
+
 	const openImageModal = (imageUrl, alt) => {
 		setImageModal({ isOpen: true, imageUrl, alt });
 	};
@@ -195,8 +244,17 @@ const TabsetStore = ({ storeId, onSave }) => {
 
 		try {
 			let response;
-			// Send the core store data with empty arrays for images
-			// Images are handled via separate upload endpoints, but we need to initialize empty arrays
+			// Send the core store data with current images
+			// Convert AdditionalImages objects to URLs for the API
+			const additionalImagesUrls = store.AdditionalImages.map(image => {
+				if (typeof image === 'string') {
+					return image;
+				} else if (typeof image === 'object' && image.url) {
+					return image.url;
+				}
+				return null;
+			}).filter(url => url !== null);
+
 			const storeData = {
 				Name: store.Name?.trim(),
 				Adresa: store.Adresa?.trim(),
@@ -206,8 +264,8 @@ const TabsetStore = ({ storeId, onSave }) => {
 				Longitude: store.Longitude?.trim(),
 				MapsURL: store.MapsURL?.trim(),
 				AvailableServices: store.AvailableServices?.trim(),
-				MainImage: null,
-				AdditionalImages: []
+				MainImage: store.MainImage, // Keep existing main image
+				AdditionalImages: additionalImagesUrls
 			};
 
 			if (storeId) {
@@ -460,13 +518,41 @@ const TabsetStore = ({ storeId, onSave }) => {
 									<div className="mt-2">
 										<h6>Imagini suplimentare existente:</h6>
 										<div className="d-flex flex-wrap gap-2">
-											{store.AdditionalImages.map((image, index) => {
+											{store.AdditionalImages
+												.filter(image => {
+													// Filter out images with URLs starting with https://api.mygold.ro/
+													const imageUrl = typeof image === 'string' ? image : image.url;
+													return !imageUrl || imageUrl !== "https://api.mygold.ro/";
+												})
+												.map((image, index) => {
 												// Handle both string URLs and object URLs
 												const imageUrl = typeof image === 'string' ? image : image.url;
 												const imageAlt = typeof image === 'object' && image.alt ? image.alt : `Imagine suplimentară ${index + 1}`;
+												const imageIdentifier = typeof image === 'object' && image.identifier ? image.identifier : null;
 
 												return (
 													<div key={index} className="position-relative">
+														{imageIdentifier && (
+															<button
+																type="button"
+																className="btn btn-sm btn-danger position-absolute"
+																style={{
+																	top: '-8px',
+																	right: '-8px',
+																	width: '20px',
+																	height: '20px',
+																	borderRadius: '50%',
+																	padding: '0',
+																	fontSize: '12px',
+																	lineHeight: '1',
+																	zIndex: '10'
+																}}
+																onClick={() => deleteAdditionalImage(index, imageIdentifier)}
+																title="Șterge imaginea"
+															>
+																×
+															</button>
+														)}
 														<img
 															src={imageUrl}
 															alt={imageAlt}
